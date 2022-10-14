@@ -64,8 +64,8 @@ function Login(){
           <button type='submit'>Login</button>
         </form>
         <p>
-          Don't have and account? 
-          <Link to='/register'>Create one here</Link>
+          Todavia no estas registrado? 
+          <Link to='/register'>Crea una cuenta aqui</Link>
         </p>
       </div>
     </div>

@@ -32,8 +32,16 @@ function App() {
               <Profile />
             </PrivateRoute>
           } />
-          <Route exact path="/login" element={<Login />} />
-          <Route exact path="/register" element={<Register />} />
+          <Route path="/login" element={
+            !currentUser?.emailVerified 
+            ? <Login/>
+            : <Profile />
+          } />
+          <Route path="/register" element={
+            !currentUser?.emailVerified 
+            ? <Register/>
+            : <Profile />
+          } />
           <Route exact path='/verify-email' element={<VerifyEmail />} />
         </Routes>
       </AuthProvider>
