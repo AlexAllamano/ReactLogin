@@ -1,34 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Profile from './routes/Profile'
+import Register from './routes/Register'
+import VerifyEmail from './routes/VerifyEmail'
+import Login from './routes/Login'
+import { useState, useEffect } from 'react'
+import { AuthProvider } from './context/AuthContext'
+import { auth } from './firebase/firebase-config'
+import { onAuthStateChanged } from 'firebase/auth'
+import PrivateRoute from './private/PrivateRoute'
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [currentUser, setCurrentUser] = useState(null);
+  const [timeActive, setTimeActive] = useState(false)
+
+  //obtenemos y seteamos el usuario actual cuando se actualiza el componente. 
+  //De esta manera al registrar un suario el currentUser va a tener la informacion del usuario registrado
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user)
+    })
+  }, [])
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    <BrowserRouter>
+      <AuthProvider value={{ currentUser, timeActive, setTimeActive }}>
+        <Routes>
+          <Route exact path='/' element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          } />
+          <Route exact path="/login" element={<Login />} />
+          <Route exact path="/register" element={<Register />} />
+          <Route exact path='/verify-email' element={<VerifyEmail />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
